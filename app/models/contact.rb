@@ -5,7 +5,7 @@ class Contact < ApplicationRecord
   end 
 
   def full_name_method
-    "#{first_name} #{last_name}".titleize 
+    "#{first_name} #{middle_name} #{last_name}".titleize 
   end 
 
   def japan_phone_number 
@@ -17,7 +17,9 @@ class Contact < ApplicationRecord
       id: id,
       full_name: full_name_method, 
       first_name: first_name,
+      middle_name: middle_name,
       last_name: last_name,
+      bio: bio,
       email: email,
       phone_number: phone_number,
       created_at: friendly_created_at
