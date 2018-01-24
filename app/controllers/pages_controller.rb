@@ -15,7 +15,12 @@ class PagesController < ApplicationController
                           phone_number: params[:phone_number]
                           )
     contact.save 
-    render json: contact.as_json 
+
+    if contact.save 
+      render json: contact.as_json 
+    else 
+      render json: {errors: contact.errors.full_messages}, status: :unprocessable_entity 
+    end 
   end 
 
   def show  
@@ -33,8 +38,13 @@ class PagesController < ApplicationController
     contact.email = params[:email] || contact.email
     contact.phone_number = params[:phone_number] || contact.phone_number
 
-    contact.save 
-    render json:  contact.as_json 
+    contact.save
+
+    if contact.save 
+      render json: contact.as_json 
+    else 
+      render json: {errors: contact.errors.full_messages}, status: :unprocessable_entity 
+    end  
   end 
 
   def destroy 
