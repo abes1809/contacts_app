@@ -1,12 +1,27 @@
 class PagesController < ApplicationController
 
   def index
-    contact = Contact.all 
-    render json: contact.as_json 
+    search_term = params[:search]
+
+    @contacts = Contact.all 
+
+    if search_term 
+      @contacts = @contact.where("first_name iLIKE ? OR middle_name iLIKE ? OR last_name iLIKE ? OR bio 
+                              iLIKE ? OR email iLIKE ? OR phone_number iLIKE ?",
+                              "%#{search_term}%",
+                              "%#{search_term}%", 
+                              "%#{search_term}%", 
+                              "%#{search_term}%", 
+                              "%#{search_term}%", 
+                              "%#{search_term}%"
+                              )
+    end 
+
+    render 'index.json.jbuilder' 
   end
 
   def create 
-    contact = Contact.new(
+    @contact = Contact.new(
                           first_name: params[:first_name],
                           middle_name: params[:middle_name],
                           last_name: params[:last_name],
@@ -14,34 +29,34 @@ class PagesController < ApplicationController
                           email: params[:email],
                           phone_number: params[:phone_number]
                           )
-    contact.save 
+    @contact.save 
 
-    if contact.save 
-      render json: contact.as_json 
+    if @contact.save 
+      render 'show.json.jbuilder'
     else 
-      render json: {errors: contact.errors.full_messages}, status: :unprocessable_entity 
+      render json: {errors: @contact.errors.full_messages}, status: :unprocessable_entity 
     end 
   end 
 
   def show  
-    contacts = Contact.find(params[:id])
-    render json: contacts.as_json 
+    @contact = Contact.find(params[:id])
+    render 'show.json.jbuilder'
   end 
 
   def update 
-    contact = Contact.find(params[:id])
+    @contact = Contact.find(params[:id])
 
-    contact.first_name = params[:first_name] || contact.first_name
-    contact.middle_name = params[:middle_name] || contact.middle_name
-    contact.last_name = params[:last_name] || contact.last_name
-    contact.bio = params[:bio] || contact.bio 
-    contact.email = params[:email] || contact.email
-    contact.phone_number = params[:phone_number] || contact.phone_number
+    @contact.first_name = params[:first_name] || @contact.first_name
+    @contact.middle_name = params[:middle_name] || @contact.middle_name
+    @contact.last_name = params[:last_name] || @contact.last_name
+    @contact.bio = params[:bio] || @contact.bio 
+    @contact.email = params[:email] || @contact.email
+    @contact.phone_number = params[:phone_number] || @contact.phone_number
 
-    contact.save
+    @contact.save
 
-    if contact.save 
-      render json: contact.as_json 
+    if @contact.save 
+      render 'index.json.jbuilder'
     else 
       render json: {errors: contact.errors.full_messages}, status: :unprocessable_entity 
     end  
